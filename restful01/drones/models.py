@@ -1,8 +1,8 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 class DroneCategory(models.Model):
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250,unique=True)
 
     class Meta:
         ordering = ('name',)
@@ -11,12 +11,13 @@ class DroneCategory(models.Model):
         return self.name
 
 class Drone(models.Model):
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250,unique=True)
     drone_category = models.ForeignKey(DroneCategory,
     related_name='drones',on_delete=models.CASCADE)
     manufacturing_date = models.DateField()
     has_it_competed = models.BooleanField(default=False)
     inserted_timestamp = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, related_name='drones', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ('name',)
@@ -31,7 +32,7 @@ class Pilot(models.Model):
         (MALE,'Male'),
         (FEMALE, 'Female'),
     )
-    name = models.CharField(max_length=150,blank=True, default='')
+    name = models.CharField(max_length=150,blank=False,unique=True)
     gender = models.CharField(max_length=2,choices=GENDER_CHOICES,default=MALE)
     race_count = models.IntegerField(default=0)
     inserted_timestamp = models.DateTimeField(auto_now_add=True)
